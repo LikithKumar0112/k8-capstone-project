@@ -1,0 +1,12 @@
+
+> employee-management-frontend@1.0.0 dev
+> vite --host
+
+
+  VITE v5.4.21  ready in 1731 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: http://10.255.255.254:5173/
+  ➜  Network: http://172.26.212.77:5173/
+  ➜  Network: http://172.19.0.1:5173/
+  ➜  Network: http://172.17.0.1:5173/

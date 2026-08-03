@@ -1,0 +1,45 @@
+server:
+  # 8080 is taken by Jenkins on the host; default to 8082 (override with SERVER_PORT).
+  port: ${SERVER_PORT:8082}
+
+spring:
+  application:
+    name: employee-management-backend
+
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:mysql://localhost:3306/employeedb}
+    username: ${SPRING_DATASOURCE_USERNAME:employee}
+    password: ${SPRING_DATASOURCE_PASSWORD:employeepass}
+
+  jpa:
+    hibernate:
+      ddl-auto: update          # auto-create/update the employees table on boot
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+    open-in-view: false
+
+  data:
+    redis:
+      host: ${SPRING_DATA_REDIS_HOST:localhost}
+      port: ${SPRING_DATA_REDIS_PORT:6379}
+
+  cache:
+    type: redis
+
+# Allowed CORS origins for the React frontend (override via ConfigMap in K8s).
+app:
+  cors:
+    allowed-origins: ${APP_CORS_ALLOWED_ORIGINS:*}
+
+# Actuator: expose /actuator/health for K8s liveness/readiness probes.
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      show-details: when_authorized

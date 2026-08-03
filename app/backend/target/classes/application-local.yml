@@ -1,0 +1,21 @@
+# ---------------------------------------------------------------------------
+# Local development profile — run with just the APP + DB (no Redis needed).
+#
+#   mvn spring-boot:run -Dspring-boot.run.profiles=local
+#
+# The default profile (application.yml) uses a Redis-backed cache, which is the
+# real multi-tier topology you will reproduce in Kubernetes. For plain localhost
+# dev we switch the cache to an in-memory "simple" cache so the app runs against
+# MySQL alone. Everything else (datasource, port) inherits application.yml,
+# whose defaults already point at localhost:3306.
+# ---------------------------------------------------------------------------
+spring:
+  cache:
+    type: simple
+  # No Redis running locally — disable its auto-configuration entirely so the
+  # app neither opens a connection nor reports DOWN on /actuator/health. The
+  # default profile keeps Redis for the real multi-tier (Kubernetes) topology.
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
+      - org.springframework.boot.autoconfigure.data.redis.RedisReactiveAutoConfiguration
