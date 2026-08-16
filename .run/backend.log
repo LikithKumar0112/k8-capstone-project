@@ -8,29 +8,32 @@
 
  :: Spring Boot ::                (v3.3.4)
 
-2026-08-03T20:30:24.441+05:30  INFO 18169 --- [employee-management-backend] [           main] c.d.e.EmployeeManagementApplication      : Starting EmployeeManagementApplication using Java 21.0.11 with PID 18169 (/root/capstone-projects/Kubernetes/project2/app/backend/target/classes started by root in /root/capstone-projects/Kubernetes/project2/app/backend)
-2026-08-03T20:30:24.444+05:30  INFO 18169 --- [employee-management-backend] [           main] c.d.e.EmployeeManagementApplication      : The following 1 profile is active: "local"
-2026-08-03T20:30:26.229+05:30  INFO 18169 --- [employee-management-backend] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Multiple Spring Data modules found, entering strict repository configuration mode
-2026-08-03T20:30:26.233+05:30  INFO 18169 --- [employee-management-backend] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
-2026-08-03T20:30:26.483+05:30  INFO 18169 --- [employee-management-backend] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 236 ms. Found 1 JPA repository interface.
-2026-08-03T20:30:27.651+05:30  INFO 18169 --- [employee-management-backend] [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8082 (http)
-2026-08-03T20:30:27.676+05:30  INFO 18169 --- [employee-management-backend] [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
-2026-08-03T20:30:27.677+05:30  INFO 18169 --- [employee-management-backend] [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.30]
-2026-08-03T20:30:27.767+05:30  INFO 18169 --- [employee-management-backend] [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
-2026-08-03T20:30:27.768+05:30  INFO 18169 --- [employee-management-backend] [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 3222 ms
-2026-08-03T20:30:28.493+05:30  INFO 18169 --- [employee-management-backend] [           main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
-2026-08-03T20:30:28.638+05:30  INFO 18169 --- [employee-management-backend] [           main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.5.3.Final
-2026-08-03T20:30:28.721+05:30  INFO 18169 --- [employee-management-backend] [           main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
-2026-08-03T20:30:29.538+05:30  INFO 18169 --- [employee-management-backend] [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
-2026-08-03T20:30:29.617+05:30  INFO 18169 --- [employee-management-backend] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
-2026-08-03T20:30:30.844+05:30  INFO 18169 --- [employee-management-backend] [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@6ca367aa
-2026-08-03T20:30:30.849+05:30  INFO 18169 --- [employee-management-backend] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
-2026-08-03T20:30:31.058+05:30  WARN 18169 --- [employee-management-backend] [           main] org.hibernate.orm.deprecation            : HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
-2026-08-03T20:30:34.098+05:30  INFO 18169 --- [employee-management-backend] [           main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
-2026-08-03T20:30:34.276+05:30  INFO 18169 --- [employee-management-backend] [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
-2026-08-03T20:30:36.361+05:30  INFO 18169 --- [employee-management-backend] [           main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 2 endpoints beneath base path '/actuator'
-2026-08-03T20:30:36.777+05:30  INFO 18169 --- [employee-management-backend] [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8082 (http) with context path '/'
-2026-08-03T20:30:36.801+05:30  INFO 18169 --- [employee-management-backend] [           main] c.d.e.EmployeeManagementApplication      : Started EmployeeManagementApplication in 13.028 seconds (process running for 14.302)
-2026-08-03T20:30:37.082+05:30  INFO 18169 --- [employee-management-backend] [nio-8082-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
-2026-08-03T20:30:37.082+05:30  INFO 18169 --- [employee-management-backend] [nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
-2026-08-03T20:30:37.086+05:30  INFO 18169 --- [employee-management-backend] [nio-8082-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 4 ms
+2026-08-16T17:30:32.967+05:30  INFO 13230 --- [employee-management-backend] [           main] c.d.e.EmployeeManagementApplication      : Starting EmployeeManagementApplication using Java 21.0.11 with PID 13230 (/root/capstone-projects/Kubernetes/project2/app/backend/target/classes started by root in /root/capstone-projects/Kubernetes/project2/app/backend)
+2026-08-16T17:30:32.982+05:30  INFO 13230 --- [employee-management-backend] [           main] c.d.e.EmployeeManagementApplication      : The following 1 profile is active: "local"
+2026-08-16T17:30:38.246+05:30  INFO 13230 --- [employee-management-backend] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Multiple Spring Data modules found, entering strict repository configuration mode
+2026-08-16T17:30:38.254+05:30  INFO 13230 --- [employee-management-backend] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-08-16T17:30:39.230+05:30  INFO 13230 --- [employee-management-backend] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 933 ms. Found 1 JPA repository interface.
+2026-08-16T17:30:45.329+05:30  INFO 13230 --- [employee-management-backend] [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8082 (http)
+2026-08-16T17:30:45.420+05:30  INFO 13230 --- [employee-management-backend] [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-08-16T17:30:45.421+05:30  INFO 13230 --- [employee-management-backend] [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.30]
+2026-08-16T17:30:45.854+05:30  INFO 13230 --- [employee-management-backend] [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2026-08-16T17:30:45.866+05:30  INFO 13230 --- [employee-management-backend] [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 12510 ms
+2026-08-16T17:30:47.745+05:30  INFO 13230 --- [employee-management-backend] [           main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-08-16T17:30:48.173+05:30  INFO 13230 --- [employee-management-backend] [           main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.5.3.Final
+2026-08-16T17:30:48.419+05:30  INFO 13230 --- [employee-management-backend] [           main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2026-08-16T17:30:52.430+05:30  INFO 13230 --- [employee-management-backend] [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-08-16T17:30:53.315+05:30  INFO 13230 --- [employee-management-backend] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-08-16T17:30:58.972+05:30  INFO 13230 --- [employee-management-backend] [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@30ed4034
+2026-08-16T17:30:58.986+05:30  INFO 13230 --- [employee-management-backend] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-08-16T17:31:00.306+05:30  WARN 13230 --- [employee-management-backend] [           main] org.hibernate.orm.deprecation            : HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-08-16T17:31:12.420+05:30  INFO 13230 --- [employee-management-backend] [           main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-08-16T17:31:14.115+05:30  INFO 13230 --- [employee-management-backend] [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-08-16T17:31:23.791+05:30  INFO 13230 --- [employee-management-backend] [           main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 2 endpoints beneath base path '/actuator'
+2026-08-16T17:31:24.846+05:30  INFO 13230 --- [employee-management-backend] [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8082 (http) with context path '/'
+2026-08-16T17:31:24.916+05:30  INFO 13230 --- [employee-management-backend] [           main] c.d.e.EmployeeManagementApplication      : Started EmployeeManagementApplication in 56.602 seconds (process running for 58.519)
+2026-08-16T17:31:27.392+05:30  INFO 13230 --- [employee-management-backend] [nio-8082-exec-4] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-08-16T17:31:27.393+05:30  INFO 13230 --- [employee-management-backend] [nio-8082-exec-4] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-08-16T17:31:27.401+05:30  INFO 13230 --- [employee-management-backend] [nio-8082-exec-4] o.s.web.servlet.DispatcherServlet        : Completed initialization in 7 ms
+2026-08-16T17:36:19.514+05:30  INFO 13230 --- [employee-management-backend] [ionShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-08-16T17:36:19.735+05:30  INFO 13230 --- [employee-management-backend] [ionShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2026-08-16T17:36:20.043+05:30  INFO 13230 --- [employee-management-backend] [ionShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
