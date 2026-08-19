@@ -1,0 +1,21 @@
+# Horizontal Pod Autoscaler (Project 3.2) — scales the backend on CPU.
+# Requires metrics-server in the cluster (GKE has it enabled by default).
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: backend
+  namespace: employee-app
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: backend
+  minReplicas: 2
+  maxReplicas: 10
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 60

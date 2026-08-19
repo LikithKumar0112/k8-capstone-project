@@ -1,0 +1,25 @@
+# Apply the whole stack with:  kubectl apply -k k8s/
+#
+# kubectl/kustomize applies resources in a sane order regardless of listing
+# (Namespace, then ConfigMap/Secret, then workloads), so you no longer need to
+# apply the folders one by one. This file is also the handoff into ArgoCD (3.4):
+# point an ArgoCD Application at this path and it syncs everything.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - namespace/namespace.yaml
+  - config/app-config.yaml
+  - config/db-secret.yaml
+  - mysql/initdb-configmap.yaml
+  - mysql/service.yaml
+  - mysql/statefulset.yaml
+  - redis/deployment.yaml
+  - redis/service.yaml
+  - backend/deployment.yaml
+  - backend/service.yaml
+  - backend/hpa.yaml
+  - frontend/deployment.yaml
+  - frontend/service.yaml
+  # Ingress is optional — uncomment if you use it instead of the LoadBalancer.
+  # - ingress/ingress.yaml

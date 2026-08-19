@@ -1,0 +1,21 @@
+# ---- Stage 1: build the jar with Maven ----
+FROM maven:3.9-eclipse-temurin-17 AS build
+WORKDIR /app
+
+# Download dependencies first so this layer is cached when only code changes.
+COPY pom.xml .
+RUN mvn dependency:go-offline -B
+
+COPY src ./src
+RUN mvn clean package -DskipTests
+
+# ---- Stage 2: run the jar on a small JRE ----
+FROM eclipse-temurin:17-jre
+WORKDIR /app
+
+COPY --from=build /app/target/*.jar app.jar
+
+# Same port the app defaults to (8080 is left for Jenkins).
+EXPOSE 8082
+
+ENTRYPOINT ["java", "-jar", "app.jar"]

@@ -1,0 +1,10 @@
+# Installed by `npm install` inside the image.
+node_modules/
+
+# Build output — the image rebuilds this itself.
+dist/
+
+# Local/IDE noise we don't want in the build context.
+.vscode/
+.idea/
+*.log

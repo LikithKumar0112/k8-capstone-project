@@ -1,0 +1,14 @@
+# LoadBalancer gives an external IP on GKE — the simplest way to reach the app
+# from the internet. (Swap to ClusterIP if you use the Ingress instead.)
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+  namespace: employee-app
+spec:
+  type: LoadBalancer
+  selector:
+    app: frontend
+  ports:
+    - port: 80
+      targetPort: 80

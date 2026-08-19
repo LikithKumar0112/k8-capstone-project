@@ -1,0 +1,12 @@
+# ClusterIP — internal only. The frontend's nginx proxies /api to "backend:8082".
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend
+  namespace: employee-app
+spec:
+  selector:
+    app: backend
+  ports:
+    - port: 8082
+      targetPort: 8082

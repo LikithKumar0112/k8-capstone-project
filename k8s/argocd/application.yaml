@@ -1,0 +1,33 @@
+# Project 3.4 · Task 4 — ArgoCD Application (GitOps).
+# ArgoCD watches this repo's k8s/ folder (it auto-detects the kustomization.yaml)
+# and keeps the cluster in sync with git. Apply this AFTER installing ArgoCD:
+#   kubectl apply -f k8s/argocd/application.yaml -n argocd
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: employee-app
+  namespace: argocd          # ArgoCD's own namespace
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/LikithKumar0112/k8-capstone-project.git
+    targetRevision: main
+    path: k8s                # the kustomization.yaml lives here
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: employee-app
+  syncPolicy:
+    automated:
+      prune: true            # delete resources removed from git
+      selfHeal: true         # revert manual drift back to git
+    syncOptions:
+      - CreateNamespace=true
+  # The HPA changes the backend's replica count at runtime; tell ArgoCD to ignore
+  # that field so GitOps and autoscaling don't fight each other.
+  ignoreDifferences:
+    - group: apps
+      kind: Deployment
+      name: backend
+      namespace: employee-app
+      jsonPointers:
+        - /spec/replicas

@@ -1,0 +1,33 @@
+# Seed script mounted into the mysql container's /docker-entrypoint-initdb.d/.
+# The mysql image runs this ONCE, on first init (empty data dir), so the UI has
+# sample rows immediately. Keep this in sync with db/init.sql.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql-initdb
+  namespace: employee-app
+data:
+  init.sql: |
+    CREATE DATABASE IF NOT EXISTS employeedb
+      CHARACTER SET utf8mb4
+      COLLATE utf8mb4_unicode_ci;
+
+    CREATE USER IF NOT EXISTS 'employee'@'%' IDENTIFIED BY 'employeepass';
+    GRANT ALL PRIVILEGES ON employeedb.* TO 'employee'@'%';
+    FLUSH PRIVILEGES;
+
+    USE employeedb;
+
+    CREATE TABLE IF NOT EXISTS employees (
+        id         INT            NOT NULL,
+        name       VARCHAR(255)   NOT NULL,
+        department VARCHAR(255)   NOT NULL,
+        salary     DOUBLE         NOT NULL,
+        PRIMARY KEY (id)
+    );
+
+    INSERT IGNORE INTO employees (id, name, department, salary) VALUES
+        (1, 'Asha Rao',      'Engineering', 95000),
+        (2, 'Vikram Singh',  'Finance',     82000),
+        (3, 'Meera Nair',    'HR',          68000),
+        (4, 'Daniel Cruz',   'Engineering', 91000);

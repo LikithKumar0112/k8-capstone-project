@@ -1,0 +1,8 @@
+# Build output — the image rebuilds this itself.
+target/
+
+# Local/IDE noise we don't want in the build context.
+.idea/
+*.iml
+.vscode/
+*.log
