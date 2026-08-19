@@ -1,81 +1,166 @@
-# Employee Management — Developer Hand-off (App + DB)
+# Employee Management — Docker & Kubernetes Capstone
 
-This is the **application and database as received from the developer** — the raw
-source that runs on **localhost**. There is intentionally **no Docker, no
-Kubernetes, no CI/CD, no Terraform** here: containerising and deploying this to
-Kubernetes is *your* task, and is planned out in [`BLUEPRINT.md`](./BLUEPRINT.md)
-against the SkillfyMe **K8 Project manual** (projects 3.1 – 3.4).
+A multi-tier **Employee Management** application taken from *runs-on-localhost* all the way to a
+**production-style deployment on Google Kubernetes Engine (GKE)** with GitOps via ArgoCD.
 
-## What's in the box
+Built as the SkillfyMe Kubernetes capstone, covering projects **3.1 – 3.4**:
+ReplicaSets & Deployments, Resource Management & HPA, PV/ConfigMap/Secrets/Services, and GitOps with ArgoCD.
+
+> The original developer hand-off (raw localhost source) and the full deployment plan are in
+> [`BLUEPRINT.md`](./BLUEPRINT.md).
+
+---
+
+## Architecture
 
 ```
-project2/
+                 ┌──────────────── Kubernetes namespace: employee-app ────────────────┐
+ Internet        │                                                                     │
+    │            │   ┌───────────┐        ┌────────────┐        ┌──────────────────┐   │
+    ▼            │   │ frontend  │  /api  │  backend   │  JDBC  │ mysql (StatefulSet│   │
+ [LoadBalancer]──────►│ React +   ├───────►│ Spring Boot├────────►│  + PVC)          │   │
+                 │   │ nginx     │        │  + HPA     │        └──────────────────┘   │
+                 │   └───────────┘        │            │  ┌──────────────────┐         │
+                 │                        │            ├──►│ redis (cache)     │        │
+                 │                        └────────────┘  └──────────────────┘         │
+                 │        ConfigMap (config)  ·  Secret (DB credentials)               │
+                 └─────────────────────────────────────────────────────────────────────┘
+                                  ▲
+                                  │ ArgoCD auto-syncs from git
+                          GitHub repo (k8s/ manifests)
+```
+
+## Tech stack
+
+| Tier | Technology | Kubernetes workload |
+|------|-----------|--------------------|
+| Frontend | React 18 + Vite, served by nginx | Deployment + LoadBalancer Service |
+| Backend | Spring Boot 3.3 (Java 17) | Deployment + ClusterIP Service + HPA |
+| Cache | Redis 7 | Deployment + Service |
+| Database | MySQL 8 | StatefulSet + PVC + headless Service |
+| Config | ConfigMap + Secret | — |
+| GitOps | ArgoCD | Application (auto-sync + self-heal) |
+
+**Images on Docker Hub:** `likith0129/employee-backend:1.0.0` · `likith0129/employee-frontend:1.0.1`
+
+---
+
+## Repository layout
+
+```
+.
 ├── app/
-│   ├── backend/      # Spring Boot 3.3 REST API (Java 17, Maven) — the application tier
-│   └── frontend/     # React 18 + Vite UI — the presentation tier
-├── db/
-│   └── init.sql      # MySQL schema + seed data — the database
-├── README.md         # this file
-└── BLUEPRINT.md      # the plan to dockerise + deploy on Kubernetes
+│   ├── backend/     Spring Boot API + Dockerfile.backend
+│   └── frontend/    React app + Dockerfile.frontend + nginx.conf
+├── db/init.sql      MySQL schema + seed data
+├── docker-compose.yml   Local 4-tier smoke test
+└── k8s/
+    ├── namespace/   config/   mysql/   redis/
+    ├── backend/     frontend/ ingress/ argocd/
+    └── kustomization.yaml   # kubectl apply -k k8s/
 ```
 
-The domain is a classic **Employee** CRUD: `{ id, name, department, salary }`,
-with the rules `id` must be positive and unique. REST API:
+---
 
-| Method | Path | Description |
-|--------|------|-------------|
-| GET    | `/api/employees`      | List all |
-| GET    | `/api/employees/{id}` | Find by id |
-| POST   | `/api/employees`      | Add (validates positive + unique id) → `201` |
-| DELETE | `/api/employees/{id}` | Remove → `204` |
-| GET    | `/actuator/health`    | Health (later used for K8s probes) |
+## Phase 1 — Dockerise (local smoke test)
 
-## Run it on localhost
+Multi-stage Dockerfiles for both tiers, wired together with `docker-compose` (MySQL + Redis + backend + frontend)
+to prove the images talk to each other before touching Kubernetes.
 
-You need **JDK 17**, **Maven**, **Node 18+**, and a **MySQL 8** running on
-`localhost:3306`.
-
-### 1. Database
-Start MySQL locally, then load the schema + seed data:
 ```bash
-mysql -u root -p < db/init.sql
+docker compose up --build      # app at http://localhost:8085
 ```
-This creates the `employeedb` database, the `employee` user, the `employees`
-table and a few sample rows.
 
-### 2. Backend (port 8082)
+| Images built | Containers running |
+|---|---|
+| ![images](screenshots/docker-images.png) | ![ps](screenshots/docker-ps.png) |
+
+| App on localhost | Backend health & logs |
+|---|---|
+| ![localhost](screenshots/docker-localhost.png) | ![logs](screenshots/logs-and-health.png) |
+
+---
+
+## Project 3.1 — ReplicaSets & Deployments
+
+Deployments managing the app pods, a bare ReplicaSet demonstrating self-healing, plus scaling, rolling updates and rollback.
+
+![ReplicaSets and Deployments](screenshots/replicasets-deployments.png)
+
+![ReplicaSets and Deployments 2](screenshots/replicasets-deployments-2.png)
+
+---
+
+## Project 3.2 — Resource Management & Horizontal Pod Autoscaling
+
+CPU/memory **requests & limits** on every pod, plus an **HPA** on the backend (CPU 60%, 2→10 replicas)
+that scales automatically under load.
+
+| Resource requests / limits | HPA configuration |
+|---|---|
+| ![resources](screenshots/backend-resource-block.png) | ![hpa](screenshots/hpa-config.png) |
+
+**Automatic scaling under load:**
+
+![autoscaling](screenshots/autoscaling.png)
+
+---
+
+## Project 3.3 — PV, ConfigMap, Secrets & Services
+
+MySQL on a **StatefulSet with a PersistentVolumeClaim** (data survives pod restarts), backend config from a
+**ConfigMap**, DB credentials from a **Secret**, and the app exposed through a **LoadBalancer Service**.
+
+| Application accessible via Kubernetes | External LoadBalancer |
+|---|---|
+| ![app access](screenshots/app-access.png) | ![lb](screenshots/gcp-lb.png) |
+
+Deploy the whole stack in one command:
+
 ```bash
-cd app/backend
-mvn spring-boot:run -Dspring-boot.run.profiles=local
-# health check:
-curl http://localhost:8082/actuator/health
-curl http://localhost:8082/api/employees
+kubectl apply -k k8s/
 ```
-> The `local` profile runs the app against **MySQL only** (an in-memory cache
-> stands in for Redis). The *default* profile expects Redis on `localhost:6379`
-> — that Redis cache tier is part of the production topology you'll rebuild in
-> Kubernetes (see the blueprint). Port is `8082` because `8080` is conventionally
-> left for Jenkins.
 
-### 3. Frontend (port 5173)
+---
+
+## Project 3.4 — GitOps with ArgoCD
+
+The `k8s/` folder is the single source of truth. ArgoCD watches this repo and keeps the cluster in sync
+(auto-sync + self-heal).
+
+**GKE cluster:**
+
+![cluster](screenshots/gke-cluster.png)
+
+| ArgoCD application | ArgoCD dashboard |
+|---|---|
+| ![argocd](screenshots/argocd.png) | ![argocd gui](screenshots/argocd-gui.png) |
+
 ```bash
-cd app/frontend
-npm install
-npm run dev
+kubectl apply -f k8s/argocd/application.yaml
 ```
-Open http://localhost:5173 . The Vite dev server proxies `/api` → the backend on
-`:8082` (see `vite.config.js`), so the browser only ever talks to one origin.
 
-## Configuration (env vars the app already honours)
+---
 
-These are the knobs you'll later map to Kubernetes **ConfigMaps** and **Secrets**:
+## Running it yourself
 
-| Variable | Default | Becomes in K8s |
-|----------|---------|----------------|
-| `SPRING_DATASOURCE_URL` | `jdbc:mysql://localhost:3306/employeedb` | ConfigMap |
-| `SPRING_DATASOURCE_USERNAME` / `_PASSWORD` | `employee` / `employeepass` | **Secret** |
-| `SPRING_DATA_REDIS_HOST` / `_PORT` | `localhost` / `6379` | ConfigMap (Redis Service DNS) |
-| `SERVER_PORT` | `8082` | container port |
-| `APP_CORS_ALLOWED_ORIGINS` | `*` | ConfigMap |
+```bash
+# Local (Docker)
+docker compose up --build
 
-**Next step:** work through [`BLUEPRINT.md`](./BLUEPRINT.md).
+# Kubernetes (from a configured kubectl context)
+kubectl apply -k k8s/
+kubectl get pods -n employee-app -w
+kubectl get svc frontend -n employee-app        # grab EXTERNAL-IP
+
+# Tear down (stop cloud charges)
+kubectl delete -k k8s/
+```
+
+## Notes & lessons
+
+Real problems hit during this build — nginx DNS quirks, CPU scheduling on a small cluster, and GCP quota
+limits — are written up in plain language in `Troubles-Faced-During-K8s-Implementation.docx`.
+
+Secrets in `k8s/config/db-secret.yaml` are **dummy values for the capstone** — production would use
+Sealed Secrets / SOPS / an external secrets manager.
