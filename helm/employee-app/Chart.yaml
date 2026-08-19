@@ -1,0 +1,6 @@
+apiVersion: v2
+name: employee-app
+description: Multi-tier Employee Management app (React/nginx + Spring Boot + MySQL + Redis) for Kubernetes
+type: application
+version: 0.1.0            # chart version
+appVersion: "1.0.0"       # app version (backend image tag)

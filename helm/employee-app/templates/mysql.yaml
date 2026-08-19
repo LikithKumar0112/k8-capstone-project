@@ -1,0 +1,93 @@
+# Seed script mounted into MySQL on first start.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql-initdb
+  labels:
+    {{- include "employee-app.labels" . | nindent 4 }}
+data:
+  init.sql: |
+    CREATE DATABASE IF NOT EXISTS employeedb
+      CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+    CREATE USER IF NOT EXISTS 'employee'@'%' IDENTIFIED BY 'employeepass';
+    GRANT ALL PRIVILEGES ON employeedb.* TO 'employee'@'%';
+    FLUSH PRIVILEGES;
+    USE employeedb;
+    CREATE TABLE IF NOT EXISTS employees (
+        id INT NOT NULL, name VARCHAR(255) NOT NULL,
+        department VARCHAR(255) NOT NULL, salary DOUBLE NOT NULL,
+        PRIMARY KEY (id)
+    );
+    INSERT IGNORE INTO employees (id, name, department, salary) VALUES
+        (1, 'Asha Rao', 'Engineering', 95000),
+        (2, 'Vikram Singh', 'Finance', 82000),
+        (3, 'Meera Nair', 'HR', 68000),
+        (4, 'Daniel Cruz', 'Engineering', 91000);
+---
+# Headless Service — stable DNS name "mysql".
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql
+  labels:
+    {{- include "employee-app.labels" . | nindent 4 }}
+spec:
+  clusterIP: None
+  selector:
+    app: mysql
+  ports:
+    - port: 3306
+      targetPort: 3306
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mysql
+  labels:
+    {{- include "employee-app.labels" . | nindent 4 }}
+spec:
+  serviceName: mysql
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+        - name: mysql
+          image: {{ .Values.mysql.image }}
+          ports:
+            - containerPort: 3306
+          envFrom:
+            - secretRef:
+                name: db-secret
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/mysql
+            - name: initdb
+              mountPath: /docker-entrypoint-initdb.d
+          resources:
+            {{- toYaml .Values.mysql.resources | nindent 12 }}
+          readinessProbe:
+            exec:
+              command: ["bash", "-c", "mysqladmin ping -h 127.0.0.1 -u root -p$MYSQL_ROOT_PASSWORD"]
+            initialDelaySeconds: 20
+            periodSeconds: 10
+      volumes:
+        - name: initdb
+          configMap:
+            name: mysql-initdb
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        {{- if .Values.mysql.storageClassName }}
+        storageClassName: {{ .Values.mysql.storageClassName | quote }}
+        {{- end }}
+        resources:
+          requests:
+            storage: {{ .Values.mysql.storage }}

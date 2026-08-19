@@ -1,0 +1,87 @@
+# Default values for the employee-app chart.
+# Override any of these with:  helm install ... --set backend.replicas=3
+# or with your own -f my-values.yaml file.
+
+# --- Backend (Spring Boot) ---
+backend:
+  image:
+    repository: likith0129/employee-backend
+    tag: "1.0.0"
+    pullPolicy: IfNotPresent
+  replicas: 2
+  port: 8082
+  resources:
+    requests:
+      cpu: 100m
+      memory: 512Mi
+    limits:
+      cpu: 500m
+      memory: 1Gi
+  hpa:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 10
+    targetCPUUtilizationPercentage: 60
+
+# --- Frontend (React + nginx) ---
+frontend:
+  image:
+    repository: likith0129/employee-frontend
+    tag: "1.0.1"
+    pullPolicy: IfNotPresent
+  replicas: 2
+  service:
+    type: LoadBalancer        # LoadBalancer (public IP) or ClusterIP (use with ingress)
+    port: 80
+  resources:
+    requests:
+      cpu: 25m
+      memory: 64Mi
+    limits:
+      cpu: 200m
+      memory: 128Mi
+
+# --- MySQL (StatefulSet + persistent storage) ---
+mysql:
+  image: mysql:8.0
+  storage: 5Gi
+  storageClassName: ""        # "" = use the cluster default StorageClass
+  resources:
+    requests:
+      cpu: 100m
+      memory: 512Mi
+    limits:
+      cpu: 500m
+      memory: 1Gi
+
+# --- Redis (cache) ---
+redis:
+  image: redis:7-alpine
+  resources:
+    requests:
+      cpu: 25m
+      memory: 64Mi
+    limits:
+      cpu: 200m
+      memory: 256Mi
+
+# --- Non-secret config (ConfigMap) ---
+config:
+  datasourceUrl: jdbc:mysql://mysql:3306/employeedb
+  redisHost: redis
+  redisPort: "6379"
+  corsAllowedOrigins: "*"
+
+# --- Secrets (DUMMY values for the capstone — override in real use) ---
+secret:
+  datasourceUsername: employee
+  datasourcePassword: employeepass
+  mysqlRootPassword: rootpass
+  mysqlDatabase: employeedb
+  mysqlUser: employee
+  mysqlPassword: employeepass
+
+# --- Ingress (optional; alternative to the LoadBalancer service) ---
+ingress:
+  enabled: false
+  host: employee.example.com

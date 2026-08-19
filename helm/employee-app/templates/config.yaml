@@ -1,0 +1,28 @@
+# Non-secret config for the backend.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+  labels:
+    {{- include "employee-app.labels" . | nindent 4 }}
+data:
+  SPRING_DATASOURCE_URL: {{ .Values.config.datasourceUrl | quote }}
+  SPRING_DATA_REDIS_HOST: {{ .Values.config.redisHost | quote }}
+  SPRING_DATA_REDIS_PORT: {{ .Values.config.redisPort | quote }}
+  APP_CORS_ALLOWED_ORIGINS: {{ .Values.config.corsAllowedOrigins | quote }}
+---
+# DUMMY credentials for the capstone — override with --set or -f in real use.
+apiVersion: v1
+kind: Secret
+metadata:
+  name: db-secret
+  labels:
+    {{- include "employee-app.labels" . | nindent 4 }}
+type: Opaque
+stringData:
+  SPRING_DATASOURCE_USERNAME: {{ .Values.secret.datasourceUsername | quote }}
+  SPRING_DATASOURCE_PASSWORD: {{ .Values.secret.datasourcePassword | quote }}
+  MYSQL_ROOT_PASSWORD: {{ .Values.secret.mysqlRootPassword | quote }}
+  MYSQL_DATABASE: {{ .Values.secret.mysqlDatabase | quote }}
+  MYSQL_USER: {{ .Values.secret.mysqlUser | quote }}
+  MYSQL_PASSWORD: {{ .Values.secret.mysqlPassword | quote }}
