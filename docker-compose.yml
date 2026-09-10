@@ -1,5 +1,5 @@
 services:
-  # --- Database tier ---
+  # Database tier
   mysql:
     image: mysql:8.0
     environment:
@@ -20,15 +20,15 @@ services:
       timeout: 5s
       retries: 5
 
-  # --- Cache tier ---
+  # Cache tier
   redis:
     image: redis:7-alpine
     ports:
       - "6379:6379"
 
-  # --- Application tier (Spring Boot) ---
+  # Application tier (Spring Boot)
   backend:
-    # Pushed to Docker Hub; `build` still lets us rebuild locally.
+    # Pushed to Docker Hub, still lets us rebuild locally.
     image: likith0129/employee-backend:1.0.0
     build:
       context: ./app/backend
@@ -54,7 +54,7 @@ services:
       retries: 10
       start_period: 40s
 
-  # --- Presentation tier (React + nginx) ---
+  # Presentation tier (React + nginx) 
   frontend:
     # Pushed to Docker Hub; `build` still lets us rebuild locally.
     image: likith0129/employee-frontend:1.0.1
