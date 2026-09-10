@@ -1,7 +1,5 @@
-# OPTIONAL (Project 3.3): host-based Ingress -> frontend Service.
-# Only needed if you use an Ingress instead of the LoadBalancer Service.
-# On GKE the default "gce" ingress class works; for this to route, set the
-# frontend Service type to ClusterIP (or NodePort) first.
+# (Project 3.3): host-based Ingress -> frontend Service. Only needed if you use an Ingress instead of the LoadBalancer Service.
+# On GKE the default "gce" ingress class works; for this to route, set the frontend Service type to ClusterIP (or NodePort) first.
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
