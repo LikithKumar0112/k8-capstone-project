@@ -1,5 +1,4 @@
-# MySQL as a StatefulSet so its data lives on a PersistentVolume (via
-# volumeClaimTemplates) and survives pod restarts/rescheduling.
+# MySQL as a StatefulSet so its data lives on a PersistentVolume (via volumeClaimTemplates) and survives pod restarts/rescheduling.
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
