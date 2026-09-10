@@ -1,9 +1,4 @@
 # Project 3.1 · Tasks 2-3 — a BARE ReplicaSet to demonstrate self-healing.
-# This is a standalone teaching resource, kept separate from the real backend
-# Deployment (note the distinct label app: rs-demo so it doesn't adopt the
-# Deployment's pods). It uses the lightweight frontend image so it runs with no
-# database dependency and almost no CPU.
-#
 # Demo:
 #   kubectl apply -f k8s/backend/replicaset.yaml
 #   kubectl get pods -n employee-app -l app=rs-demo
