@@ -1,9 +1,6 @@
 #!/usr/bin/env bash
-# ---------------------------------------------------------------------------
 # Run the whole app locally with one command:  ./run.sh
-#
 #   MySQL (Docker)  ->  Spring Boot backend (local profile)  ->  React frontend
-#
 # Stop it all with:  ./stop.sh
 # ---------------------------------------------------------------------------
 set -euo pipefail
