@@ -1,6 +1,5 @@
 # Seed script mounted into the mysql container's /docker-entrypoint-initdb.d/.
-# The mysql image runs this ONCE, on first init (empty data dir), so the UI has
-# sample rows immediately. Keep this in sync with db/init.sql.
+# The mysql image runs this once, on first init (empty data dir), so the UI has sample rows immediately. Keep this in sync with db/init.sql.
 apiVersion: v1
 kind: ConfigMap
 metadata:
