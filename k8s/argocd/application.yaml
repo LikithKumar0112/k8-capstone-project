@@ -5,7 +5,7 @@ metadata:
   name: employee-app
   namespace: argocd          
 spec:
-  project: default
+  project: employee-app
   source:
     repoURL: https://github.com/LikithKumar0112/k8-capstone-project.git
     targetRevision: main
