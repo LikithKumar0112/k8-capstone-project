@@ -71,7 +71,7 @@ Changes made in response to the review, with how each was verified on the live c
 
 | # | Area | Change | Verified |
 |---|------|--------|----------|
-| A1 | Secrets | Plaintext `Secret` → **Bitnami SealedSecret** (`db-sealedsecret.yaml`); plaintext removed from Git & git-ignored | `SealedSecret … SYNCED=True`; `grep employeepass` → none |
+| A1 | Secrets | Plaintext `Secret` → **Bitnami SealedSecret** (`db-sealedsecret.yaml`); plaintext removed from Git & git-ignored | `SealedSecret … SYNCED=True`; no plaintext creds in Git |
 | A1 | Schema | Removed Hibernate `ddl-auto: update` → **Flyway** (`ddl-auto: validate`, `V1__init.sql`) | log: `validated 1 migration … schema version: 1` |
 | A2 | Containers | **Non-root** users on **pinned** bases (`temurin:17.0.20_8-jre-alpine`, `nginx-unprivileged:1.27.5-alpine`, :8080) | `kubectl exec deploy/backend -- id` → `uid=100(app)` |
 | B1 | Deploy source | Helm → `packaging-alternative/` (demo); creds stripped from `values.yaml`; ArgoCD deploys only `k8s/` | one source reconciled; no creds in values |
@@ -171,6 +171,7 @@ kubectl apply -f k8s/argocd/application.yaml
 
 ```bash
 # Local (Docker)
+cp .env.example .env           # then set your local DB passwords
 docker compose up --build
 
 # Kubernetes (from a configured kubectl context)

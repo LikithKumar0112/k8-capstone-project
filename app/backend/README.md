@@ -35,7 +35,7 @@ cd backend && mvn test
 |----------|---------|---------|
 | `SERVER_PORT` | `8082` | HTTP port (8080 reserved for Jenkins) |
 | `SPRING_DATASOURCE_URL` | `jdbc:mysql://localhost:3306/employeedb` | MySQL JDBC URL |
-| `SPRING_DATASOURCE_USERNAME` / `_PASSWORD` | `employee` / `employeepass` | DB creds (K8s Secret) |
+| `SPRING_DATASOURCE_USERNAME` / `_PASSWORD` | `employee` / *(none — required)* | DB creds (from the K8s SealedSecret, or `.env` locally) |
 | `SPRING_DATA_REDIS_HOST` / `_PORT` | `localhost` / `6379` | Redis (K8s Service) |
 | `APP_CORS_ALLOWED_ORIGINS` | `*` | Frontend origin (K8s ConfigMap) |
 

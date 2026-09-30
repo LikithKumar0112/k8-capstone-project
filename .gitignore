@@ -3,3 +3,6 @@ app/backend/target/
 app/frontend/node_modules/
 app/frontend/dist/
 .run/
+
+# local docker-compose secrets
+.env

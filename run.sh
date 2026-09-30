@@ -9,6 +9,14 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 LOGS="$ROOT/.run"
 mkdir -p "$LOGS"
 
+# Credentials come from .env (git-ignored). Copy the template on first run:
+#   cp .env.example .env
+if [ -f "$ROOT/.env" ]; then set -a; . "$ROOT/.env"; set +a; fi
+: "${MYSQL_ROOT_PASSWORD:?missing — run 'cp .env.example .env' and set values}"
+: "${MYSQL_PASSWORD:?missing — run 'cp .env.example .env' and set values}"
+# The backend (default/local profile) reads this; no default is baked into application.yml.
+export SPRING_DATASOURCE_PASSWORD="${SPRING_DATASOURCE_PASSWORD:-$MYSQL_PASSWORD}"
+
 MYSQL_NAME="employee-mysql"
 BACKEND_URL="http://localhost:8082"
 FRONTEND_URL="http://localhost:5173"
@@ -22,20 +30,21 @@ for tool in docker mvn npm curl; do
 done
 
 # --- 1. database ----------------------------------------------------------
+# Schema + seed are owned by Flyway (applied by the backend on boot), so no
+# init.sql mount is needed here.
 log "Starting MySQL ($MYSQL_NAME)..."
 docker rm -f "$MYSQL_NAME" >/dev/null 2>&1 || true
 docker run -d --name "$MYSQL_NAME" \
   -p 3306:3306 \
   -e MYSQL_DATABASE=employeedb \
   -e MYSQL_USER=employee \
-  -e MYSQL_PASSWORD=employeepass \
-  -e MYSQL_ROOT_PASSWORD=rootpass \
-  -v "$ROOT/db/init.sql:/docker-entrypoint-initdb.d/init.sql" \
+  -e MYSQL_PASSWORD="$MYSQL_PASSWORD" \
+  -e MYSQL_ROOT_PASSWORD="$MYSQL_ROOT_PASSWORD" \
   mysql:8.0 >/dev/null
 
 log "Waiting for MySQL to accept connections..."
 for i in $(seq 1 60); do
-  if docker exec "$MYSQL_NAME" mysqladmin ping -h localhost -prootpass >/dev/null 2>&1; then
+  if docker exec "$MYSQL_NAME" mysqladmin ping -h localhost -p"$MYSQL_ROOT_PASSWORD" >/dev/null 2>&1; then
     log "MySQL is ready."; break
   fi
   [ "$i" = 60 ] && die "MySQL did not become ready in time (see: docker logs $MYSQL_NAME)"

@@ -3,16 +3,15 @@ services:
   mysql:
     image: mysql:8.0
     environment:
-      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: employeedb
       MYSQL_USER: employee
-      MYSQL_PASSWORD: employeepass
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     ports:
       - "3306:3306"
     volumes:
-      # Seed schema + sample data on first start.
-      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
-      # Keep data between restarts.
+      # Schema + seed data are owned by Flyway (runs from the backend on boot),
+      # so no init.sql mount is needed. Data persists between restarts.
       - mysql-data:/var/lib/mysql
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
@@ -29,14 +28,14 @@ services:
   # Application tier (Spring Boot)
   backend:
     # Pushed to Docker Hub, still lets us rebuild locally.
-    image: likith0129/employee-backend:1.0.0
+    image: likith0129/employee-backend:1.1.0
     build:
       context: ./app/backend
       dockerfile: Dockerfile.backend
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/employeedb
       SPRING_DATASOURCE_USERNAME: employee
-      SPRING_DATASOURCE_PASSWORD: employeepass
+      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
       SPRING_DATA_REDIS_HOST: redis
       SPRING_DATA_REDIS_PORT: 6379
     ports:
@@ -54,16 +53,16 @@ services:
       retries: 10
       start_period: 40s
 
-  # Presentation tier (React + nginx) 
+  # Presentation tier (React + non-root nginx)
   frontend:
     # Pushed to Docker Hub; `build` still lets us rebuild locally.
-    image: likith0129/employee-frontend:1.0.1
+    image: likith0129/employee-frontend:1.1.0
     build:
       context: ./app/frontend
       dockerfile: Dockerfile.frontend
     ports:
-      # Host 8085 -> nginx 80 (8080 is left for Jenkins; 8081/8082 already in use).
-      - "8085:80"
+      # Host 8085 -> unprivileged nginx 8080 (it cannot bind 80 as non-root).
+      - "8085:8080"
     depends_on:
       backend:
         condition: service_healthy
