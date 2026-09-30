@@ -9,15 +9,18 @@ spring:
   datasource:
     url: ${SPRING_DATASOURCE_URL:jdbc:mysql://localhost:3306/employeedb}
     username: ${SPRING_DATASOURCE_USERNAME:employee}
-    password: ${SPRING_DATASOURCE_PASSWORD:employeepass}
+    password: ${SPRING_DATASOURCE_PASSWORD}
 
   jpa:
     hibernate:
-      ddl-auto: update          # auto-create/update the employees table on boot
+      ddl-auto: validate
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
     open-in-view: false
+  flyway:
+    enable: true
+    baseline-on-migrate: true
 
   data:
     redis:

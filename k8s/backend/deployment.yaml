@@ -1,4 +1,4 @@
-# Backend (Spring Boot) - stateless, 2 replicas, config from ConfigMap + Secret.
+# Backend (Spring Boot) — stateless, 2 replicas, config from ConfigMap + Secret.
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -16,28 +16,34 @@ spec:
     spec:
       containers:
         - name: backend
-          image: likith0129/employee-backend:1.0.0
+          image: likith0129/employee-backend:1.1.0
           ports:
             - containerPort: 8082
           envFrom:
             - configMapRef:
-                name: app-config     # datasource URL, redis host/port, CORS
+                name: app-config
             - secretRef:
-                name: db-secret      # DB username/password
-          # requests/limits for scheduling + HPA.
+                name: db-secret
           resources:
+            # request stays low so the HPA (B3) triggers readily under load;
+            # limit allows CPU burst so cold-start boot is fast.
             requests: { cpu: "100m", memory: "512Mi" }
-            limits:   { cpu: "500m", memory: "1Gi" }
-          # Spring Boot Actuator exposes these probe endpoints.
+            limits:   { cpu: "1000m", memory: "1Gi" }
+          # startupProbe gates liveness/readiness until the app has booted,
+          # so a slow cold start can't be mistaken for a crash (30*10s = 5 min).
+          startupProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8082
+            failureThreshold: 30
+            periodSeconds: 10
           readinessProbe:
             httpGet:
               path: /actuator/health/readiness
               port: 8082
-            initialDelaySeconds: 30
             periodSeconds: 10
           livenessProbe:
             httpGet:
               path: /actuator/health/liveness
               port: 8082
-            initialDelaySeconds: 60
             periodSeconds: 15

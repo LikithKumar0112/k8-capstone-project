@@ -1,0 +1,5 @@
+# build artifacts, deps, runtime logs
+app/backend/target/
+app/frontend/node_modules/
+app/frontend/dist/
+.run/

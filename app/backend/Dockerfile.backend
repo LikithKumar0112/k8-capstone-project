@@ -9,13 +9,11 @@ RUN mvn dependency:go-offline -B
 COPY src ./src
 RUN mvn clean package -DskipTests
 
-# ---- Stage 2: run the jar on a small JRE ----
-FROM eclipse-temurin:17-jre
+# ---- Stage 2: run the jar on a small, pinned
+FROM eclipse-temurin:17.0.20_8-jre-alpine
+RUN addgroup -S app && adduser -S app -G app
 WORKDIR /app
-
 COPY --from=build /app/target/*.jar app.jar
-
-# Same port the app defaults to (8080 is left for Jenkins).
+USER app
 EXPOSE 8082
-
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java","-jar","app.jar"]

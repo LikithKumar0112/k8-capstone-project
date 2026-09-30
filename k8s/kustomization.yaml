@@ -8,7 +8,7 @@ kind: Kustomization
 resources:
   - namespace/namespace.yaml
   - config/app-config.yaml
-  - config/db-secret.yaml
+  - config/db-sealedsecret.yaml
   - mysql/initdb-configmap.yaml
   - mysql/service.yaml
   - mysql/statefulset.yaml
