@@ -9,9 +9,6 @@ data:
   init.sql: |
     CREATE DATABASE IF NOT EXISTS employeedb
       CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-    CREATE USER IF NOT EXISTS 'employee'@'%' IDENTIFIED BY 'employeepass';
-    GRANT ALL PRIVILEGES ON employeedb.* TO 'employee'@'%';
-    FLUSH PRIVILEGES;
     USE employeedb;
     CREATE TABLE IF NOT EXISTS employees (
         id INT NOT NULL, name VARCHAR(255) NOT NULL,
